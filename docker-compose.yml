@@ -1,0 +1,96 @@
+version: "3.9"
+
+networks:
+  mon_reseau_docker:
+    external: true
+
+volumes:
+  wordpress_data:
+  mysql_data:
+
+services:
+  wordpress:
+    depends_on:
+      - mysql
+    image: wordpress:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: 1234
+      WORDPRESS_DB_NAME: wp_db
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - mon_reseau_docker
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: wp_db
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: 1234
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mon_reseau_docker
+
+  apache:
+    build:
+      context: ./apache
+    ports:
+      - "8000:80"
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - mon_reseau_docker
+
+  php:
+    build:
+      context: ./php  # Adjust the context path based on the actual location of your Dockerfile
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    networks:
+      - mon_reseau_docker
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - mon_reseau_docker
+
+  nginx:
+    build:
+      context: ./nginx
+    image: nginx:latest
+    ports:
+      - "8082:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    networks:
+      - mon_reseau_docker
+
+  apache2:
+    build:
+      context: ./apache2
+    image: httpd:latest
+    ports:
+      - "8083:80"
+    depends_on:
+      - php
+      - mysql
+    volumes:
+      - ./apache2/apache2.conf:/usr/local/apache2/conf/apache2.conf
+    networks:
+      - mon_reseau_docker
