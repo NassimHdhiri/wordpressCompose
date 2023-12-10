@@ -19,6 +19,7 @@
     http://localhost:8081
   #### wordpress Go to
     http://localhost:8080
+    http://localhost:8080/wp-admin
   #### apache2 Go to
     http://localhost:8083
     
