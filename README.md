@@ -13,12 +13,12 @@
         docker-compose up -d
 
   ### Enter into ... : 
-  #### phpMyadmin 
+  #### phpMyadmin Go to
     username: root
     password : 1234
-    Go to http://localhost:8081
-  #### wordpress
-    Go to http://localhost:8080
-  #### apache2
-    Go to http://localhost:8083
+    http://localhost:8081
+  #### wordpress Go to
+    http://localhost:8080
+  #### apache2 Go to
+    http://localhost:8083
     
